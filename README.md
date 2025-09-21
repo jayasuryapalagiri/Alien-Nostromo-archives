@@ -25,7 +25,7 @@ Includes hidden password-protected mode with **SPECIAL ORDER 937** alert.
 ---
 
 ## 🚀 Demo
-👉 Live demo: [GitHub Pages](https://kirylpaulenka.github.io/Alien-Nostromo-archives/)  
+👉 Live demo: [GitHub Pages](https://kirill-pavlenko-by.github.io/Alien-Nostromo-archives/)  
 
 *(or check out the video demo on YouTube/TikTok)*  
 
