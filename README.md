@@ -5,6 +5,7 @@ Line-by-line printing with cursor, scanline effects, glowing text, and authentic
 Includes hidden password-protected mode with **SPECIAL ORDER 937** alert.  
 
 ![Nostromo CRT Demo](demo.png)
+![Nostromo CRT — Live Demo](demo.gif)
 
 ---
 
