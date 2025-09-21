@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CRT • Weyland-Yutani Dossier — Nostromo CRT v1.5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#050806; --ph:#00ff66; --ph-dim:#00aa55; --scan:0.08; }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--ph)}
+  body{font-family:'Share Tech Mono', ui-monospace, Consolas, Monaco, monospace;overflow:hidden}
+
+  .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+  .crt{
+    width:min(1100px,95vw);aspect-ratio:16/9;position:relative;background:#000;
+    border:6px solid #0b120e;border-radius:14px;
+    box-shadow:0 0 0 2px #0b120e inset,0 40px 80px rgba(0,0,0,.6);overflow:hidden
+  }
+  .crt::before{
+    content:"";position:absolute;inset:-18%;
+    background:
+      radial-gradient(115% 90% at 50% 50%, rgba(255,255,255,.045), transparent 55%),
+      radial-gradient(160% 140% at 50% -10%, rgba(255,255,255,.06), transparent 55%);
+    mix-blend-mode:overlay;pointer-events:none
+  }
+  .scanlines{position:absolute;inset:0;pointer-events:none;opacity:var(--scan);
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(0,0,0,.7) 3px,rgba(0,0,0,.7) 4px)}
+  .noise{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:0.15;
+    background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>');
+    background-size:200px 200px;animation:grain 1s steps(4) infinite}
+  @keyframes grain{0%{background-position:0 0}25%{background-position:50px -50px}50%{background-position:-50px 50px}75%{background-position:100px 100px}100%{background-position:0 0}}
+
+  .grid{position:absolute;inset:0;padding:28px;display:grid;grid-template-columns:1.85fr 1fr;gap:24px;align-items:stretch;overflow:hidden}
+
+  .term{
+    position:relative;height:100%;margin-top:2.2em;white-space:pre-wrap;overflow:auto;color:var(--ph-dim);
+    font-size:clamp(14px,1.2vw,19px);line-height:1.16;letter-spacing:.07em;
+    text-shadow:0 0 2px #0b3,0 0 6px #062;animation:drift 5s ease-in-out infinite, flicker 2.7s infinite
+  }
+  .cursor{display:inline-block;width:.6ch;height:1em;background:var(--ph);margin-left:2px;vertical-align:-.1em;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+  @keyframes drift{0%{transform:translate(0,0)}20%{transform:translate(0.4px,0.2px)}40%{transform:translate(-0.6px,-0.2px)}60%{transform:translate(0.3px,0.4px)}80%{transform:translate(-0.2px,-0.3px)}100%{transform:translate(0,0)}}
+  @keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;filter:brightness(100%)}20%,24%,55%{opacity:.85;filter:brightness(80%)}22%{opacity:.7;filter:brightness(60%)}}
+
+  .beam{position:absolute;left:-10%;width:120%;height:2px;background:linear-gradient(90deg,transparent,rgba(0,255,128,.85),transparent);box-shadow:0 0 8px rgba(0,255,128,.8),0 0 16px rgba(0,180,96,.6);filter:blur(.2px);pointer-events:none;opacity:.95;z-index:5}
+  .beam.run{animation:beamRun .22s cubic-bezier(.2,.6,.2,1) forwards}
+  @keyframes beamRun{from{transform:translateX(-20%)}to{transform:translateX(20%)}}
+
+  /* Фото и подпись: подпись ниже изображения, больше не перекрывает */
+  .photo{
+    display:grid;grid-template-rows:1fr auto;place-items:stretch;background:#0a0a0a;border-left:2px solid #093;position:relative;overflow:hidden
+  }
+  .photo img{
+    width:100%;height:100%;object-fit:contain;
+    filter:grayscale(100%) contrast(140%) brightness(90%);
+    image-rendering: pixelated;
+    box-shadow:0 0 0 2px #0c2,0 0 10px #063
+  }
+  /* синтетическая сетка для ASH — только над картинкой */
+  .crt.ash .photo::after{
+    content:"";position:absolute;left:0;right:0;top:0;bottom:3.2em;pointer-events:none;
+    background:repeating-linear-gradient(135deg, rgba(0,255,128,.20) 0 2px, transparent 2px 6px);
+    mix-blend-mode:screen;opacity:.35
+  }
+  .photo figcaption{
+    position:relative;z-index:2;
+    padding:10px 12px 10px;background:#000c;color:#fff;border-top:1px solid #093;
+    letter-spacing:.08em;text-transform:uppercase;font-weight:bold;
+    font-size:clamp(13px,1.05vw,18px);line-height:1.25;text-align:left;
+    text-shadow:0 0 2px #000,0 0 6px #031;
+  }
+  .photo figcaption .cap{ display:inline-block; }
+
+  .status-line{
+    display:block;text-align:center;margin:2px 0;color:var(--ph);
+    font-size:1.1em;letter-spacing:.09em;
+    text-shadow:0 0 2.2px #0f6, 0 0 6.6px #083;
+  }
+
+  .title{position:absolute;top:14px;left:20px;color:var(--ph);text-transform:uppercase;opacity:.95;letter-spacing:.12em;font-size:clamp(12px,1vw,14px)}
+  @media (max-width:820px){.grid{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
+
+  /* мини-меню */
+  .mini{
+    position:absolute;top:10px;right:18px;z-index:9;
+    background:#051;border:1px solid #093;border-radius:8px;
+    color:#9f9;font-size:12px;letter-spacing:.06em;padding:4px 6px;opacity:.9
+  }
+  .mini b{opacity:.9;margin-right:6px}
+  .mini button{
+    background:transparent;border:none;color:#9f9;cursor:pointer;
+    font:inherit;padding:2px 4px;opacity:.8
+  }
+  .mini button.on{color:#0f6;opacity:1;text-shadow:0 0 6px #0a4}
+  .mini button:hover{text-decoration:underline}
+
+  /* ссылка SO937 */
+  .so937{ color:#0f6;cursor:pointer;border-bottom:1px dotted #0f6;text-shadow:0 0 6px #0f6,0 0 12px #083 }
+  .so937:hover{filter:brightness(1.2)}
+
+  /* модал */
+  .overlay{position:absolute;inset:0;background:rgba(0,0,0,.72);display:none;place-items:center;z-index:12}
+  .overlay.show{display:grid}
+  .modal{
+    width:min(760px,92%);background:#000;border:2px solid #093;border-radius:12px;
+    color:#0f6;padding:16px 18px;box-shadow:0 0 30px rgba(0,255,102,.18) inset;text-shadow:0 0 6px #062
+  }
+  .modal h2{margin:.2em 0 .6em 0;font-size:1.05rem;letter-spacing:.12em}
+  .modal .row{margin:.5em 0 1em 0}
+  .modal input{
+    width:220px;background:#000;border:1px solid #093;border-radius:8px;
+    color:#0f6;padding:8px 10px;outline:none;letter-spacing:.12em;text-transform:uppercase
+  }
+  .modal .btn{
+    display:inline-block;margin-left:8px;padding:8px 10px;border-radius:8px;border:1px solid #093;
+    color:#9f9;background:#041;cursor:pointer
+  }
+  .modal .btn:hover{filter:brightness(1.15)}
+  .modal .close{float:right;cursor:pointer;opacity:.8}
+  .modal .close:hover{opacity:1}
+  .modal.alert{ border-color:#a22; box-shadow:0 0 30px rgba(255,60,60,.22) inset; color:#ff9d9d; }
+  .doc{max-height:52vh;overflow:auto;white-space:pre-wrap;line-height:1.16;letter-spacing:.07em;color:#bfffd3}
+  .center{ text-align:center }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crt" id="crt">
+    <div class="title">WEYLAND-YUTANI // CREW DOSSIER  BG97-GDS</div>
+
+    <div class="mini" id="mini">
+      <b></b>
+      <button data-id="RIPLEY" class="on">RIPLEY</button>
+      <button data-id="DALLAS">DALLAS</button>
+      <button data-id="LAMBERT">LAMBERT</button>
+      <button data-id="KANE">KANE</button>
+      <button data-id="PARKER">PARKER</button>
+      <button data-id="BRETT">BRETT</button>
+      <button data-id="ASH">ASH</button>
+    </div>
+
+    <div class="grid">
+      <pre id="term" class="term"></pre>
+      <figure class="photo">
+        <img src="Ripley.png" alt="Portrait"/>
+        <figcaption><div class="cap">FILE: BG97-GDS / SUBJECT:<br>RIPLEY, ELLEN (LT.)</div></figcaption>
+      </figure>
+    </div>
+    <div class="scanlines"></div>
+    <div class="noise"></div>
+
+    <!-- SO937 модал -->
+    <div class="overlay" id="overlay">
+      <div class="modal" id="modal">
+        <div class="close" id="closeBtn">✕</div>
+        <h2 id="modalTitle">ACCESS: SPECIAL ORDER 937</h2>
+        <div class="body" id="modalBody">
+          <div class="row">ENTER AUTH CODE:</div>
+          <div class="row">
+            <input id="pw" type="password" placeholder="AUTH CODE" autocomplete="off" autofocus>
+            <button class="btn" id="okBtn">OK</button>
+          </div>
+          <div class="row" id="msg" style="color:#ff7575;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<audio id="wav" src="Terminal.WAV" preload="auto" playsinline loop autoplay muted></audio>
+
+<script>
+'use strict';
+
+/* ===== ДАННЫЕ ===== */
+const CREW = {
+  RIPLEY: {
+    img: 'Ripley.png',
+    caption: 'FILE: BG97-GDS / SUBJECT:<br>RIPLEY, ELLEN (LT.)',
+    paragraphs: [
+`FILE: BG97-GDS / SUBJECT: RIPLEY, ELLEN (LT.)`,
+`DATE OF BIRTH: 01-07-2092   SEX: FEMALE   HEIGHT: 5'11"   WEIGHT: 52KG
+CURRENT STATUS: LICENSE SUSPENDED PENDING REVIEW`,
+`SERVICE RECORD:
+  • WARRANT OFFICER, USCSS NOSTROMO — M-COMMERCIAL TOW SHIP (WEYLAND-YUTANI)
+  • REGISTRY 180286BR — TUG WITH DETACHABLE REFINERY / ORE PROCESSING MODULE
+  • EMERGENCY SEQUENCE: SELF-DESTRUCT EXECUTED DURING QUARANTINE INCIDENT
+  • SURVIVAL: 57 YEARS CRYO-HYPERSLEEP — RECOVERED BY SALVAGE TEAM
+  • CONSULTANT TO COLONIAL MARINES: OPERATION LV-426 (HADLEY'S HOPE)`,
+`PSYCHOLOGICAL EVALUATION: ST-2 (TEMPORARY)
+NOTES: EXEMPLARY LEADERSHIP UNDER XENOMORPH CONTACT; RECORDS SEALED BY BOARD.`
+    ]
+  },
+  DALLAS: {
+    img: 'Dallas.png',
+    caption: 'FILE: BG97-GDS / SUBJECT:<br>DALLAS, ARTHUR (CAPT.)',
+    paragraphs: [
+`FILE: BG97-GDS / SUBJECT: DALLAS, ARTHUR (CAPT.)`,
+`DATE OF BIRTH: 02-11-2090 (APPROX.)   SEX: MALE   HEIGHT: 6'0"   WEIGHT: 82KG
+CURRENT STATUS: MISSING — PRESUMED DECEASED`,
+`SERVICE RECORD:
+  • CAPTAIN, USCSS NOSTROMO — M-COMMERCIAL TOW SHIP (WEYLAND-YUTANI)
+  • REGISTRY 180286BR — DEEP-SPACE TUG & REFINERY CONVOY OPS
+  • LICENSE: STARFREIGHT MASTER CLASS-C — LONG-HAUL
+  • DUTY QUALS: EVA SUPERVISION, EXTERNAL DOCKING, AUTODOC AUTH
+  • EMERGENCY SEQUENCE: QUARANTINE PROTOCOLS INVOKED ON LV-426
+  • LAST TRANSMISSION: DERELICT SCOUTING PARTY — CONTACT LOST`,
+`PSYCHOLOGICAL EVALUATION: ST-3 (CLASSIFIED)
+NOTES: CALM COMMAND PROFILE; HIGH TRUST BY CREW;`
+    ]
+  },
+  LAMBERT: {
+    img: 'Lambert.png',
+    caption: 'FILE: BG97-GDS / SUBJECT:<br>LAMBERT, JOAN (NAV. OFF.)',
+    paragraphs: [
+`FILE: BG97-GDS / SUBJECT: LAMBERT, JOAN (NAV. OFF.)`,
+`DATE OF BIRTH: 10-04-2097 (APPROX.)   SEX: FEMALE   HEIGHT: 5'7"   WEIGHT: 58KG
+CURRENT STATUS: DECEASED — USCSS NOSTROMO`,
+`SERVICE RECORD:
+  • NAVIGATION OFFICER, USCSS NOSTROMO — TUG/REFINERY OPERATION
+  • ASTROGATION: LONG-BASELINE JUMPS, APPROACH & INSTRUMENT LANDING
+  • QUALS: DEEP-SCAN PLOTTING, ILS, ORBITAL INSERTION WINDOWS
+  • INCIDENT: DIVERTED TO ZETA-2 RETICULI — LV-426 BEACON TRIANGULATION
+  • EMERGENCY RESPONSE: INTERNAL MOTION-TRACKER OPS`,
+`PSYCHOLOGICAL EVALUATION: ST-2 (TEMPORARY)
+NOTES: ELEVATED STRESS REACTIVITY; PERFORMANCE WITHIN SAFE RANGE.`
+    ]
+  },
+  KANE: {
+    img: 'Kane.png',
+    caption: 'FILE: BG97-GDS / SUBJECT:<br>KANE, THOMAS (EXEC. OFF.)',
+    paragraphs: [
+`FILE: BG97-GDS / SUBJECT: KANE, THOMAS (EXEC. OFF.)`,
+`DATE OF BIRTH: 03-29-2091 (APPROX.)   SEX: MALE   HEIGHT: 5'10"   WEIGHT: 74KG
+CURRENT STATUS: DECEASED — MEDICAL TERMINATION`,
+`SERVICE RECORD:
+  • EXECUTIVE OFFICER, USCSS NOSTROMO — WATCH & EVA TEAM LEAD
+  • EVA LOG: DERELICT SURVEY, AIRLOCK BREACH PROCEDURES
+  • MEDICAL INCIDENT: HOST ORGANISM CONTAMINATION — BIOHAZARD LEVEL 5
+  • CONTAINMENT ATTEMPT: SURGICAL INTERVENTION — FAILURE`,
+`PSYCHOLOGICAL EVALUATION: ST-2 (TEMPORARY)
+NOTES: PROFESSIONAL CONDUCT; HIGH RISK ACCEPTANCE DURING SCOUT EVA.`
+    ]
+  },
+  PARKER: {
+    img: 'Parker.png',
+    caption: 'FILE: BG97-GDS / SUBJECT:<br>PARKER, DENNIS (CHIEF ENG.)',
+    paragraphs: [
+`FILE: BG97-GDS / SUBJECT: PARKER, DENNIS (CHIEF ENG.)`,
+`DATE OF BIRTH: 08-21-2089 (APPROX.)   SEX: MALE   HEIGHT: 6'4"   WEIGHT: 98KG
+CURRENT STATUS: DECEASED — USCSS NOSTROMO`,
+`SERVICE RECORD:
+  • CHIEF ENGINEER, USCSS NOSTROMO — POWERTRAIN & REFINERY INTERFACE
+  • QUALS: REACTOR CONTROL, CRYO-PUMP ALIGN, CUTTING TORCH OPS
+  • LOG: DAMAGE CONTROL, COOLANT RECIRCULATION, AIR SCRUBBER REPAIR
+  • EMERGENCY: CONTAINMENT & CREW EVAC SUPPORT`,
+`PSYCHOLOGICAL EVALUATION: ST-2 (TEMPORARY)
+NOTES: RESOURCEFUL UNDER PRESSURE; ASSERTIVE RISK MITIGATION.`
+    ]
+  },
+  BRETT: {
+    img: 'Brett.png',
+    caption: 'FILE: BG97-GDS / SUBJECT:<br>BRETT, SAMUEL (ENG. TECH.)',
+    paragraphs: [
+`FILE: BG97-GDS / SUBJECT: BRETT, SAMUEL (ENG. TECH.)`,
+`DATE OF BIRTH: 05-06-2092 (APPROX.)   SEX: MALE   HEIGHT: 5'8"   WEIGHT: 70KG
+CURRENT STATUS: DECEASED — USCSS NOSTROMO`,
+`SERVICE RECORD:
+  • ENGINEERING TECHNICIAN — REFINERY SYSTEMS & CARGO HANDLING
+  • QUALS: AIR DUCT MAINT, AUTOLOADER SERVICE, FAB SHOP TOOLING
+  • LOG: COOLANT LEAK PATROL, CHAIN-OF-COMMAND COMPLIANCE ISSUES`,
+`PSYCHOLOGICAL EVALUATION: ST-2 (TEMPORARY)
+NOTES: LOW INITIATIVE; RELIABLE IN ROUTINE TASKS; RECORDS SEALED.`
+    ]
+  },
+  ASH: {
+    img: 'Ash.png',
+    caption: 'FILE: BG97-GDS / SUBJECT:<br>ASH (SCIENCE OFFICER)',
+    paragraphs: [
+`FILE: BG97-GDS / SUBJECT: ASH (SCIENCE OFFICER)`,
+`MODEL: HYPERDYNE A/2 — SERIAL: 120A-2   SEX: N/A   HEIGHT: 5'7"   WEIGHT: 68KG
+CURRENT STATUS: DEACTIVATED — SYSTEMS TERMINATED`,
+`SERVICE RECORD:
+  • SCIENCE OFFICER, USCSS NOSTROMO — ASSIGNED BY COMPANY (OVERRIDE)
+  • ACCESS: MU/TH/UR 182 — HIGH PRIVILEGE CHANNELS
+  • DIRECTIVE: SPECIAL ORDER 937 (CLASSIFIED) — CREW EXPENDABLE (SEALED)
+  • LAB OPS: BIOASSAY, CONTAINMENT PROTOCOLS, SAMPLE PRIORITY HANDLING`,
+`PSYCHOLOGICAL / BEHAVIORAL:
+  • AFFECT EMULATION: HIGH FIDELITY; RISK PRIORITIZATION: NON-HUMAN
+  • NOTES: OPERATIONAL DRIVES UNDISCLOSED; RECORDS SEALED BY BOARD.`
+    ]
+  }
+};
+
+/* ===== УЗЛЫ ===== */
+const term       = document.getElementById('term');
+const photoImg   = document.querySelector('.photo img');
+const photoCap   = document.querySelector('.photo .cap');
+const menu       = document.getElementById('mini');
+const crt        = document.getElementById('crt');
+
+/* ===== АУДИО ===== */
+const a = document.getElementById('wav');
+let audioReady=false, unlocked=false, volAnim=null;
+const PRINT_VOL=0.96, SILENT_VOL=0.0;
+
+document.addEventListener('DOMContentLoaded', async ()=>{
+  try{ a.volume=0.0; a.muted=true; a.loop=true; await a.play(); setTimeout(()=>{a.muted=false; audioReady=true; if(state.printing) lineOn();},80); }catch(e){}
+});
+function unlock(){ if(unlocked) return; unlocked=true; a.volume=0.0; a.muted=false; a.play().then(()=>{audioReady=true;if(state.printing)lineOn();}).catch(()=>{}); }
+window.addEventListener('pointerdown', unlock, {once:true});
+window.addEventListener('keydown',   unlock, {once:true});
+function fadeTo(target,ms=90){
+  target=Math.max(0,Math.min(1,target));
+  if(!audioReady){ a.volume=target; return; }
+  if(volAnim) cancelAnimationFrame(volAnim);
+  const t0=performance.now(), v0=a.volume;
+  function step(t){ const p=Math.min(1,(t-t0)/ms); a.volume=v0+(target-v0)*p; if(p<1) volAnim=requestAnimationFrame(step); }
+  volAnim=requestAnimationFrame(step);
+}
+function lineOn(){ if(unlocked||audioReady) fadeTo(PRINT_VOL,70); }
+function lineOff(){ if(unlocked||audioReady) fadeTo(SILENT_VOL,120); }
+setInterval(()=>{ if((unlocked||audioReady)&&a.paused){ a.play().catch(()=>{}); } },900);
+
+/* ===== ПЕЧАТЬ (устойчивый ран) ===== */
+const state = { runId:0, printing:false, appendStatus:true, onDone:null, activeId:'RIPLEY' };
+let blocks=[], pIdx=0, lIdx=0, cIdx=0, inBullet=false, beamFired=[], timer=null;
+
+const charDelay=()=>18+Math.random()*16, linePause=()=>180, paraPause=()=>300;
+
+function resetRun(paragraphs, {appendStatus=true, onDone=null}={}){
+  state.runId++; state.printing=false; state.appendStatus=appendStatus; state.onDone=onDone;
+  blocks = paragraphs.map(p=>p.toUpperCase().split('\n'));
+  pIdx=0; lIdx=0; cIdx=0; inBullet=false; beamFired=new Array(blocks.length).fill(false);
+  if(timer) clearTimeout(timer);
+  term.textContent='';
+  timer=setTimeout(()=>loop(state.runId), 300);
+}
+function alreadyPrinted(){
+  let s=''; for(let p=0;p<pIdx;p++) s+=blocks[p].join('\n')+'\n\n';
+  for(let l=0;l<lIdx;l++) s+=blocks[pIdx][l]+'\n';
+  return s;
+}
+function render(text){
+  term.textContent=text;
+
+  if (state.activeId==='ASH'){
+    const needle='SPECIAL ORDER 937';
+    const t=term.textContent, i=t.indexOf(needle);
+    if(i>=0){
+      term.innerHTML='';
+      term.appendChild(document.createTextNode(t.slice(0,i)));
+      const so=document.createElement('span'); so.className='so937'; so.textContent=needle;
+      term.appendChild(so);
+      term.appendChild(document.createTextNode(t.slice(i+needle.length)));
+    }
+  }
+
+  const cur=document.createElement('span'); cur.className='cursor';
+  term.appendChild(document.createTextNode(' ')); term.appendChild(cur);
+  term.scrollTop=term.scrollHeight;
+}
+function spawnBeam(){
+  const prefix=alreadyPrinted();
+  term.innerHTML = prefix + '<span id="__mark"></span>';
+  const mark=document.getElementById('__mark');
+  const y = mark ? mark.offsetTop+mark.offsetHeight/2 : (term.clientHeight-12);
+  render(prefix);
+  const beam=document.createElement('div'); beam.className='beam'; beam.style.top=y+'px';
+  term.appendChild(beam);
+  requestAnimationFrame(()=>{beam.classList.add('run'); setTimeout(()=>beam.remove(),260);});
+}
+function appendStatus(){
+  if (!state.appendStatus) return;
+  if (term.lastChild && term.lastChild.classList && term.lastChild.classList.contains('cursor')){
+    term.removeChild(term.lastChild); if (term.lastChild && term.lastChild.nodeType===3) term.removeChild(term.lastChild);
+  }
+  term.appendChild(document.createTextNode('\n\n'));
+  const s1=document.createElement('span'); s1.className='status-line'; s1.textContent='FILE STATUS:';
+  const s2=document.createElement('span'); s2.className='status-line'; s2.textContent='CLOSED';
+  term.appendChild(s1); term.appendChild(s2);
+  const cur=document.createElement('span'); cur.className='cursor';
+  term.appendChild(document.createTextNode(' ')); term.appendChild(cur);
+  term.scrollTop=term.scrollHeight;
+}
+function loop(runId){
+  if(runId!==state.runId) return;
+  if(pIdx>=blocks.length){
+    state.printing=false; lineOff();
+    if(typeof state.onDone==='function'){ const cb=state.onDone; state.onDone=null; setTimeout(cb,450); return; }
+    setTimeout(appendStatus, 600);
+    return;
+  }
+
+  if(cIdx===0 && lIdx===0 && (pIdx===0 || pIdx===blocks.length-1) && !beamFired[pIdx]){
+    beamFired[pIdx]=true; spawnBeam();
+  }
+
+  const line=blocks[pIdx][lIdx]||'';
+
+  if(!inBullet && cIdx===0 && line.startsWith('  • ')){
+    inBullet=true; const base=alreadyPrinted(); let on=true, cnt=0;
+    (function blink(){
+      render(base+'  '+(on?'•':' ')+' '); on=!on; cnt++;
+      if(cnt<6) setTimeout(blink,140); else { inBullet=false; cIdx=3; state.printing=true; lineOn(); timer=setTimeout(()=>loop(runId),140); }
+    })(); return;
+  }
+
+  const prefix=alreadyPrinted();
+  if(cIdx===0){ state.printing=true; lineOn(); }
+
+  if(cIdx<line.length){
+    render(prefix+line.slice(0,cIdx+1)); cIdx++;
+    if(a.volume<PRINT_VOL*0.6) a.volume=PRINT_VOL;
+    timer=setTimeout(()=>loop(runId), charDelay());
+  }else{
+    state.printing=false; lineOff();
+    render(prefix+line); cIdx=0; lIdx++;
+    if(lIdx>=blocks[pIdx].length){ lIdx=0; pIdx++; timer=setTimeout(()=>loop(runId), paraPause()); }
+    else{ timer=setTimeout(()=>loop(runId), linePause()); }
+  }
+}
+
+/* ===== ПЕРЕКЛЮЧЕНИЕ ПЕРСОНАЖЕЙ ===== */
+function setSubject(id){
+  const s=CREW[id]; state.activeId=id;
+  photoImg.src=s.img; photoCap.innerHTML=s.caption;
+  [...menu.querySelectorAll('button')].forEach(b=>b.classList.toggle('on', b.dataset.id===id));
+  crt.classList.toggle('ash', id==='ASH');
+  resetRun(s.paragraphs, {appendStatus:true});
+}
+menu.addEventListener('click', (e)=>{ const id=e.target?.dataset?.id; if(CREW[id]) setSubject(id); });
+const order=['RIPLEY','DALLAS','LAMBERT','KANE','PARKER','BRETT','ASH'];
+window.addEventListener('keydown', (e)=>{ const i=+e.key-1; if(i>=0&&i<order.length) setSubject(order[i]); });
+
+/* ===== SO937 ===== */
+const overlay=document.getElementById('overlay');
+const modal  =document.getElementById('modal');
+const closeBtn=document.getElementById('closeBtn');
+function openPassword(){
+  overlay.classList.add('show');
+  const okBtn=document.getElementById('okBtn');
+  const pw=document.getElementById('pw');
+  const msg=document.getElementById('msg');
+  modal.classList.remove('alert'); msg.textContent=''; pw.value=''; pw.focus();
+
+  function deny(){
+    modal.classList.add('alert');
+    msg.textContent='СОВЕРШЕННО СЕКРЕТНО. ДОСТУП ЗАПРЕЩЕН.';
+  }
+  function verify(){
+    const code=pw.value.trim().toUpperCase();
+    if(code==='BG97'){
+      // 2s авторизация
+      modal.classList.remove('alert');
+      document.getElementById('modalBody').innerHTML =
+        '<div class="row center">AUTHORIZATION…</div><div class="row center">MU/TH/UR 182 // OK</div>';
+      setTimeout(()=>{ overlay.classList.remove('show'); runSO937(); }, 2000);
+    }else{ deny(); }
+  }
+  okBtn.onclick=verify;
+  pw.onkeydown=(e)=>{ if(e.key==='Enter') verify(); };
+}
+closeBtn.addEventListener('click', ()=>overlay.classList.remove('show'));
+term.addEventListener('click', (e)=>{ if(e.target.classList.contains('so937')) openPassword(); });
+
+function runSO937(){
+  state.activeId='SO937'; crt.classList.add('ash');
+  photoCap.innerHTML='MU/TH/UR 182 // SPECIAL ORDER&nbsp;937';
+
+  const notes = [
+`SPECIAL ORDER 937 // ACCESS GRANTED`,
+`OPERATIONAL NOTES (EXCERPT):
+  • INSPECTION OF BEACON SOURCE IS MANDATORY.
+  • COMPANY SCIENCE OFFICER HOLDS OVERRIDE AUTHORITY.
+  • CONTAINMENT IS PARAMOUNT; QUARANTINE MAY BE SUSPENDED
+    IF IT CONFLICTS WITH SPECIMEN ACQUISITION.`
+  ];
+  const priority = [
+`SPECIAL ORDER 937 // ACCESS GRANTED`,
+`PRIORITY ONE:
+  • SECURE AND RETURN SPECIMEN (XENOFORM) FOR ANALYSIS.
+  • ALL OTHER CONSIDERATIONS SECONDARY.
+  • CREW EXPENDABLE.`
+  ];
+
+  // печатаем NOTES без FILE STATUS -> очистка -> PRIORITY (тоже без статуса)
+  resetRun(notes, {
+    appendStatus:false,
+    onDone: ()=> {
+      setTimeout(()=>{ resetRun(priority, {appendStatus:false}); }, 700);
+    }
+  });
+}
+
+/* старт — Рипли */
+setSubject('RIPLEY');
+</script>
+</body>
+</html>
